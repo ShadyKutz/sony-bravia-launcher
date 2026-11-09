@@ -4,7 +4,7 @@ android {
     compileSdk 34
     defaultConfig {
         applicationId 'com.udesh.tvhome'
-        minSdk 31          // the TV runs Android 12 (SDK 31)
+        minSdk 29          // this TV is Android 10 (SDK 29); original target was 12
         targetSdk 34
         versionCode 1
         versionName '1.0'

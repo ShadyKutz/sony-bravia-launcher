@@ -8,10 +8,15 @@
 #        ./restore.sh --uninstall  also uninstall it
 cd "$(dirname "$0")"
 B=$(ls -d backup/*/ | head -1)
-for p in $(grep -vE '^\s*(#|$)' debloat-list.txt) com.sony.dtv.launcherxcustomizer com.google.android.apps.tv.launcherx com.google.android.tungsten.setupwraith; do
+for p in $(grep -vE '^\s*(#|$)' debloat-list.txt) \
+  com.sony.dtv.launcherxcustomizer com.google.android.apps.tv.launcherx \
+  com.sony.dtv.tvlaunchercustomizer com.google.android.tvlauncher \
+  com.google.android.tungsten.setupwraith; do
   printf '%-45s ' "$p"; ./tv shell "pm enable --user 0 $p 2>&1" | tr -d '\n'; echo
 done
-./tv shell "cmd package set-home-activity com.google.android.apps.tv.launcherx/.home.HomeActivity"
+# Prefer Google TV home if present; fall back to Android 10 Leanback launcher.
+./tv shell "cmd package set-home-activity com.google.android.apps.tv.launcherx/.home.HomeActivity" \
+  || ./tv shell "cmd package set-home-activity com.google.android.tvlauncher/.MainActivity"
 
 # accessibility: back to the original (off, nothing enabled)
 ./tv shell "settings delete secure enabled_accessibility_services"

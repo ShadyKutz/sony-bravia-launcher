@@ -10,10 +10,11 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.graphics.Outline;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.media.tv.TvContract;
 import android.media.tv.TvInputInfo;
@@ -23,6 +24,7 @@ import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -121,9 +123,17 @@ public class HomeActivity extends Activity {
     @Override protected void onCreate(Bundle b) {
         super.onCreate(b);
         dp = getResources().getDisplayMetrics().density;
-        Rect bounds = getWindowManager().getCurrentWindowMetrics().getBounds();
-        sw = bounds.width();
-        sh = bounds.height();
+        // getCurrentWindowMetrics() is API 30+; Android 10 falls back to Display.
+        if (Build.VERSION.SDK_INT >= 30) {
+            Rect bounds = getWindowManager().getCurrentWindowMetrics().getBounds();
+            sw = bounds.width();
+            sh = bounds.height();
+        } else {
+            Point size = new Point();
+            getWindowManager().getDefaultDisplay().getRealSize(size);
+            sw = size.x;
+            sh = size.y;
+        }
         prefs = getSharedPreferences("home", MODE_PRIVATE);
         lastApp = prefs.getString("lastApp", null);
         weather = new Weather(this);

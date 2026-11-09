@@ -11,8 +11,11 @@ APK=launcher/app/build/outputs/apk/debug/app-debug.apk
 # Wi-Fi name on the Wi-Fi pill needs location permission (SSID only; weather never uses it)
 ./tv shell "pm grant com.udesh.tvhome android.permission.ACCESS_FINE_LOCATION" || true
 # Default home. Google's setup app has a higher-priority HOME screen, so it must stay disabled.
-./tv shell "pm disable-user --user 0 com.google.android.apps.tv.launcherx"
-./tv shell "pm disable-user --user 0 com.sony.dtv.launcherxcustomizer"
+# Android 12+ Google TV uses launcherx; Android 10 Leanback uses tvlauncher.
+./tv shell "pm disable-user --user 0 com.google.android.apps.tv.launcherx" || true
+./tv shell "pm disable-user --user 0 com.sony.dtv.launcherxcustomizer" || true
+./tv shell "pm disable-user --user 0 com.google.android.tvlauncher" || true
+./tv shell "pm disable-user --user 0 com.sony.dtv.tvlaunchercustomizer" || true
 ./tv shell "pm disable-user --user 0 com.google.android.tungsten.setupwraith"
 ./tv shell "cmd package set-home-activity com.udesh.tvhome/.HomeActivity"
 # Apps button: lets the colour-button service see the system "all apps" request (see README)
